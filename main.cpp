@@ -1,10 +1,7 @@
 /*
  Author : Taymour
  */
-#include <iostream>
-#include <algorithm>
-#include <ctime>
-#include<map>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -18,8 +15,7 @@ int getMax(int arr[], int n) {
 }
 
 template<typename T>
-// selection sort
-//o(n^2)
+// selection sort , O(N^2)
 void selectionSort(T array[], int n) {
     //index to the current unordered minimum value
     int minimum;
@@ -262,41 +258,416 @@ void countSort(T arr[], int n) {
     }
 
 }
-
-struct Node {
-    int info{};
-    Node *link{};
-    Node *previous{};
-};
+//Linked Lists
 
 
-class linked {
+template<class T>
+class LinkedList {
 public:
-    Node *head;
-    Node *tail;
-    int size;
-    Node *current;
+    struct Node {
+        T val;
+        Node *next;
+    };
+    Node *Head;
+    Node *Tail;
+    int Size;
 
-    linked() {
-        size = 0;
-        head = NULL;
+
+    LinkedList() {
+        Head = nullptr;
+        Tail = nullptr;
+        Size = 0;
     }
 
-    void push(int n) {
-        if (size = 0) {
-            Node *currentnode;
-            currentnode->info = n;
-            currentnode->link = NULL;
-            head = currentnode;
-            current = head;
-        } else {
-            Node *currentnode;
-            currentnode->info = n;
-            currentnode->link = NULL;
-            current->link = currentnode;
+    bool isEmpty() {
+        return Head == nullptr;
+    }
 
+    void pushBack(T val) {
+        if (isEmpty()) {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = nullptr;
+            Head = temp;
+            Tail = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        } else {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = nullptr;
+            Tail->next = temp;
+            Tail = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
         }
     }
+
+    void pushFront(T val) {
+        if (Size == 0) {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = nullptr;
+            Head = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        } else {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = Head;
+            Head = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        }
+    }
+
+    T PopFront() {
+        if (Size > 0) {
+            T val = Head->val;
+            Node *temp = new Node();
+            temp = Head;
+            Head = Head->next;
+            delete[] temp;
+            temp = nullptr;
+            Size--;
+            return val;
+        } else {
+            cout << "Empty List\n";
+        }
+    }
+
+    T popBack() {
+        Node *current = Head;
+        while (current->next != Tail) {
+            current = current->next;
+        }
+        T val = Tail->val;
+        delete Tail;
+        Tail = current;
+        Tail->next = nullptr;
+        current = nullptr;
+        delete current;
+        Size--;
+        return val;
+    }
+
+    void InsertAt(int pos, T val) {
+        if (isEmpty()) {
+            pushFront(val);
+        } else {
+            if (pos <= 0) {
+                pushFront(val);
+            } else if (pos >= Size - 1) {
+                pushBack(val);
+            } else {
+                Node *current = Head;
+                for (int i = 0; i < pos - 1; i++) {
+                    current = current->next;
+                }
+                Node *newNode = new Node();
+                newNode->val = val;
+                newNode->next = current->next;
+                current->next = newNode;
+                newNode = nullptr;
+                current = nullptr;
+                delete newNode;
+                delete current;
+                Size++;
+            }
+        }
+    }
+
+    void DeleteAt(int pos) {
+        if (isEmpty()) {
+            cout << "Empty List\n";
+        } else {
+            if (pos <= 0) {
+                PopFront();
+            } else if (pos >= Size - 1) {
+                popBack();
+            } else {
+                Node *current = Head;
+                for (int i = 0; i < pos - 1; i++) {
+                    current = current->next;
+                }
+                Node *del = current->next;
+                current->next = del->next;
+                del = nullptr;
+                current = nullptr;
+                delete del;
+                delete current;
+                Size--;
+            }
+        }
+    }
+
+    int getPos(T val) {
+        Node *current = Head;
+        int i = -1;
+        while (current != nullptr) {
+            if (current->val == val) {
+                i++;
+                return i;
+            }
+            i++;
+            current = current->next;
+        }
+        return i;
+    }
+
+    void DeleteItem(T item) {
+        if (isEmpty()) {
+            cout << "Empty List\n";
+        } else {
+            DeleteAt(getPos(item));
+        }
+    }
+
+    void Reverse() {
+        if (isEmpty()) {
+            cout << "Empty List\n";
+        } else if (Head->next == nullptr) {
+            cout << "";
+        } else {
+            Node *prev = nullptr;
+            Node *current = Head;
+            Node *next = current->next;
+            while (next != nullptr) {
+                next = current->next;
+                current->next = prev;
+                prev = current;
+                current = next;
+            }
+            Head = prev;
+        }
+    }
+
+    void Print() {
+        if (Head != nullptr) {
+            Node *current = Head;
+            cout << "[ ";
+            while (current != nullptr) {
+                cout << current->val << " ";
+                current = current->next;
+            }
+            cout << "]" << endl;
+        } else {
+            cout << "Empty List\n";
+        }
+    }
+
+};
+
+template<class T>
+class CircularLinkedList {
+    struct Node {
+        T val;
+        Node *next;
+    };
+    Node *Head;
+    Node *Tail;
+    int Size;
+public:
+
+    CircularLinkedList() {
+        Head = nullptr;
+        Tail = nullptr;
+        Size = 0;
+    }
+
+    bool isEmpty() {
+        return Head == nullptr;
+    }
+
+    void pushBack(T val) {
+        if (isEmpty()) {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = nullptr;
+            Head = temp;
+            Tail = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        } else {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = Head;
+            Tail->next = temp;
+            Tail = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        }
+    }
+
+    void pushFront(T val) {
+        if (Size == 0) {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = nullptr;
+            Head = temp;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        } else {
+            Node *temp = new Node;
+            temp->val = val;
+            temp->next = Head;
+            Head = temp;
+            Tail->next = Head;
+            temp = nullptr;
+            delete temp;
+            Size++;
+        }
+    }
+
+    T PopFront() {
+        if (Size > 0) {
+            T val = Head->val;
+            Node *temp = new Node();
+            temp = Head;
+            Head = Head->next;
+            Tail->next = Head;
+            delete[] temp;
+            temp = nullptr;
+            Size--;
+            return val;
+        } else {
+            cout << "Empty List\n";
+        }
+    }
+
+    T popBack() {
+        Node *current = Head;
+        while (current->next != Tail) {
+            current = current->next;
+        }
+        Tail = current;
+        current = current->next;
+        T x = current->val;
+        Tail->next = Head;
+        delete current;
+        Size--;
+        return x;
+    }
+
+    void InsertAt(int pos, T val) {
+        if (isEmpty()) {
+            pushFront(val);
+        } else {
+            if (pos <= 0) {
+                pushFront(val);
+            } else if (pos >= Size - 1) {
+                pushBack(val);
+            } else {
+                Node *current = Head;
+                for (int i = 0; i < pos - 1; i++) {
+                    current = current->next;
+                }
+                Node *newNode = new Node();
+                newNode->val = val;
+                newNode->next = current->next;
+                current->next = newNode;
+                newNode = nullptr;
+                current = nullptr;
+                delete newNode;
+                delete current;
+                Size++;
+            }
+        }
+    }
+
+    void DeleteAt(int pos) {
+        if (isEmpty()) {
+            cout << "Empty List\n";
+        } else {
+            if (pos <= 0) {
+                PopFront();
+            } else if (pos >= Size - 1) {
+                popBack();
+            } else {
+                Node *current = Head;
+                for (int i = 0; i < pos - 1; i++) {
+                    current = current->next;
+                }
+                Node *del = current->next;
+                current->next = del->next;
+                del = nullptr;
+                current = nullptr;
+                delete del;
+                delete current;
+                Size--;
+            }
+        }
+    }
+
+    int getPos(T val) {
+        Node *current = Head;
+        int i = -1;
+        while (current != nullptr) {
+            if (current->val == val) {
+                i++;
+                return i;
+            }
+            i++;
+            current = current->next;
+        }
+        return i;
+    }
+
+    void DeleteItem(T item) {
+        if (isEmpty()) {
+            cout << "Empty List\n";
+        } else {
+            DeleteAt(getPos(item));
+        }
+    }
+
+    void Reverse() {
+        if (isEmpty()) {
+            cout << "Empty List\n";
+        } else if (Head->next == nullptr) {
+            cout << "";
+        } else {
+            Node *prev = nullptr;
+            Node *current = Head;
+            Node *next = current->next;
+            while (next != Head) {
+                next = current->next;
+                current->next = prev;
+                prev = current;
+                current = next;
+            }
+            Head = prev;
+            while (current->next != nullptr) {
+                current = current->next;
+            }
+            Tail = current;
+            Tail->next = Head;
+        }
+    }
+
+    void Print() {
+        if (Size > 1) {
+            Node *current = Head;
+            cout << "[ ";
+            while (current->next != Head) {
+                cout << current->val << " ";
+                current = current->next;
+            }
+            cout << Tail->val << " ]" << endl;
+        } else if (Size == 1) {
+            cout << "[ " << Head->val << " ]n";
+        } else {
+            cout << "Empty List\n";
+        }
+    }
+
 };
 
 class Stack {
@@ -342,71 +713,235 @@ public:
 
 };
 
+template<class T>
 class Queue {
 private:
-    int size = 0;
-    int *arr;
-    int max;
-    int index;
+    int size, leftPointer, rightPointer;
+    T *arr;
 public:
-    Queue(int n) {
-        arr = new int[n];
-        max = n;
-        index = 0;
+    explicit Queue(int n) {
+        leftPointer = rightPointer = 0;
+        size = n;
+        arr = new T[n + 5];
     }
 
-    void clear() {
-        size = 0;
+    Queue() {}
+
+    void enqueue(T data) {
+        // check queue is full or not
+        if (size == rightPointer) {
+            cout << "Queue is full" << endl;
+            return;
+        }
+
+            // insert element at the rear
+        else {
+            arr[rightPointer++] = data;
+        }
+    }
+
+    T dequeue() {
+        // if queue is empty
+        T data = arr[0];
+        if (leftPointer == rightPointer) {
+            cout << "QUEUE IS EMPTY" << endl;
+            return T();
+        } else {
+            for (int i = 0; i < rightPointer - 1; i++) {
+                arr[i] = arr[i + 1];
+            }
+            rightPointer--;
+        }
+        return data;
+    }
+
+    T first() {
+        return arr[leftPointer];
     }
 
     bool isEmpty() {
-        return (size == 0);
+        return (rightPointer - leftPointer == 0);
     }
 
-    void enqueue(int x) {
-        if (size <= max) {
-            size++;
-            arr[size - 1] = x;
-
-        } else {
-            cout << "Queue is Full !";
-        }
+    int queueSize() {
+        return rightPointer - leftPointer;
     }
 
-    void dequeue() {
-        if (size != 0) {
-            cout << arr[index];
-            index++;
-            size--;
-        }
+    void clear() {
+        rightPointer = leftPointer = 0;
+    }
 
+    void print() {
+        for (int i = leftPointer; i < rightPointer; i++) {
+            cout << arr[i] << ' ';
+        }
+        cout << endl;
+    }
+
+    void reverseQueue() {
+        reverse(arr, arr + rightPointer);
+    }
+
+    void sort() {
+        set<T> s;
+        while (!isEmpty()) {
+            s.insert(dequeue());
+        }
+        for (auto &i: s) {
+            enqueue(i);
+        }
     }
 };
 
-//Main function 
+void mergeLinkedLists(vector<LinkedList<int>> &VLL) {
+    LinkedList<int> result;
+    result = VLL.front();
+    for (int i = 1; i < (int) VLL.size(); i++) {
+        auto curr = VLL[i].Head;
+        while (curr != nullptr) {// loop on the current linked list
+            // add numbers from current linked list one by one inside RESULT
+            auto currResult = result.Head;
+            int pos = 0;
+            while (currResult != nullptr) {
+                if (currResult->val >= curr->val)break;
+                pos++;
+                currResult = currResult->next;
+            }
+            result.InsertAt(pos, curr->val);
+            curr = curr->next;
+        }
+    }
+    result.Print();
+}
+
+void CombineNodesBetweenZeros(LinkedList<int> &linkedList) {
+    LinkedList<int> resultingLinkedList;
+    auto curr = linkedList.Head;
+    int zeros = 0, result = 0;
+    while (curr != nullptr) {
+        if (curr->val == 0)
+            zeros++;
+        if (zeros == 2) {
+            resultingLinkedList.pushBack(result);
+            zeros--;
+            result = 0;
+        } else
+            result += curr->val;
+        curr = curr->next;
+    }
+    resultingLinkedList.Print();
+}
+
+void generateBinary(int n, Queue<int> &q) {
+    if (n == 0)return;
+    generateBinary(n / 2, q);
+    q.enqueue(n & 1);
+}
+
+void binaryNumbers(int n) {
+    Queue<int> q(32);
+    for (int i = 1; i <= n; i++) {
+        generateBinary(i, q);
+        while (!q.isEmpty()) {
+            cout << q.dequeue();
+        }
+        cout << ' ';
+        q.clear();
+    }
+}
+
+template<class T>
+class StackUsingQueue {
+    Queue<T> q;
+public:
+    explicit StackUsingQueue(int n) {
+        Queue<T> qq(n);
+        q = qq;
+    }
+
+    void push(T n) {
+        q.enqueue(n);
+    }
+
+    void pop() {
+        q.reverseQueue();
+        q.dequeue();
+        q.reverseQueue();
+    }
+
+    void print() {
+        q.print();
+    }
+};
+
 int main() {
 
-//     const int N = 100; // Change N to the desired array size
+    //---------------------------------------------------------------------
 
-//     int arr[N];
+    // Merge K Sorted Linked Lists
 
-//     for (int i = 0; i < N; i++) {
-//         arr[i] = rand() % 1000; // Generates a random integer between 0 and 999
-//     }
+    /*vector<LinkedList<int>> vectorOfLinkedLists;
+    int no_of_LinkedLists;
+    cin >> no_of_LinkedLists;
+    vectorOfLinkedLists.resize(no_of_LinkedLists);
+    for (int i = 0; i < (int) vectorOfLinkedLists.size(); i++) {
+        cout << "ENTER " << i + 1 << "th Linked List Size" << endl;
+        int n;
+        cin >> n;
+        while (n--) {
+            int x;
+            cin >> x;
+            vectorOfLinkedLists[i].pushBack(x);
+        }
+    }
+    mergeLinkedLists(vectorOfLinkedLists);*/
 
-//     int arrSize = N;
-//     clock_t x = clock(); 
-//     countSort(arr,N-1);
-//     clock_t time = clock() - x;
+    //---------------------------------------------------------------------
 
+    // Combine Nodes Between Zeros
 
-//     cout<<endl<<"sorted: ";
-//     for (int i = 0; i < arrSize; i++) {
-//         cout << arr[i] << " ";
-//     }
-// printf ("This Algorithm take (%.8lf ms).\n", ((double)time/CLOCKS_PER_SEC) * 1000);
-//     cout << endl;
+    /*vector<int> v = {0,3,1,0,4,5,2,0};
+    vector<int> z = {0, 1, 0, 3, 0, 2, 2, 0};
+    LinkedList<int> linkedList;
+    for(auto &i:v){
+        linkedList.pushBack(i);
+    }
+    CombineNodesBetweenZeros(linkedList);*/
 
+    //---------------------------------------------------------------------
+    // Binary Numbers From 1 to N
 
+    /*binaryNumbers(5);*/
+
+    //---------------------------------------------------------------------
+
+    // Stack Using Queue
+
+    /*StackUsingQueue<int> STC(10);
+    STC.push(10);
+    STC.push(20);
+    STC.push(30);
+    STC.push(40);
+    STC.push(50);
+    STC.push(60);
+    STC.print();
+    STC.pop();
+    STC.print();
+    STC.pop();*/
+
+    //---------------------------------------------------------------------
+
+    // sort Queue
+
+    /*Queue<int> q(50);
+    q.enqueue(50);
+    q.enqueue(40);
+    q.enqueue(30);
+    q.enqueue(20);
+    q.enqueue(10);
+    q.sort();
+    q.print();*/
+
+    //---------------------------------------------------------------------
 
 }
