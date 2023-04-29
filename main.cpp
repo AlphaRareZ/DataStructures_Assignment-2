@@ -342,71 +342,235 @@ public:
 
 };
 
+template<class T>
 class Queue {
 private:
-    int size = 0;
-    int *arr;
-    int max;
-    int index;
+    int size, leftPointer, rightPointer;
+    T *arr;
 public:
-    Queue(int n) {
-        arr = new int[n];
-        max = n;
-        index = 0;
+    explicit Queue(int n) {
+        leftPointer = rightPointer = 0;
+        size = n;
+        arr = new T[n + 5];
     }
 
-    void clear() {
-        size = 0;
+    Queue() {}
+
+    void enqueue(T data) {
+        // check queue is full or not
+        if (size == rightPointer) {
+            cout << "Queue is full" << endl;
+            return;
+        }
+
+            // insert element at the rear
+        else {
+            arr[rightPointer++] = data;
+        }
+    }
+
+    T dequeue() {
+        // if queue is empty
+        T data = arr[0];
+        if (leftPointer == rightPointer) {
+            cout << "QUEUE IS EMPTY" << endl;
+            return T();
+        } else {
+            for (int i = 0; i < rightPointer - 1; i++) {
+                arr[i] = arr[i + 1];
+            }
+            rightPointer--;
+        }
+        return data;
+    }
+
+    T first() {
+        return arr[leftPointer];
     }
 
     bool isEmpty() {
-        return (size == 0);
+        return (rightPointer - leftPointer == 0);
     }
 
-    void enqueue(int x) {
-        if (size <= max) {
-            size++;
-            arr[size - 1] = x;
-
-        } else {
-            cout << "Queue is Full !";
-        }
+    int queueSize() {
+        return rightPointer - leftPointer;
     }
 
-    void dequeue() {
-        if (size != 0) {
-            cout << arr[index];
-            index++;
-            size--;
-        }
+    void clear() {
+        rightPointer = leftPointer = 0;
+    }
 
+    void print() {
+        for (int i = leftPointer; i < rightPointer; i++) {
+            cout << arr[i] << ' ';
+        }
+        cout << endl;
+    }
+
+    void reverseQueue() {
+        reverse(arr, arr + rightPointer);
+    }
+
+    void sort() {
+        set<T> s;
+        while (!isEmpty()) {
+            s.insert(dequeue());
+        }
+        for (auto &i: s) {
+            enqueue(i);
+        }
     }
 };
 
-//Main function 
+void mergeLinkedLists(vector<LinkedList<int>> &VLL) {
+    LinkedList<int> result;
+    result = VLL.front();
+    for (int i = 1; i < (int) VLL.size(); i++) {
+        auto curr = VLL[i].Head;
+        while (curr != nullptr) {// loop on the current linked list
+            // add numbers from current linked list one by one inside RESULT
+            auto currResult = result.Head;
+            int pos = 0;
+            while (currResult != nullptr) {
+                if (currResult->val >= curr->val)break;
+                pos++;
+                currResult = currResult->next;
+            }
+            result.InsertAt(pos, curr->val);
+            curr = curr->next;
+        }
+    }
+    result.Print();
+}
+
+void CombineNodesBetweenZeros(LinkedList<int> &linkedList) {
+    LinkedList<int> resultingLinkedList;
+    auto curr = linkedList.Head;
+    int zeros = 0, result = 0;
+    while (curr != nullptr) {
+        if (curr->val == 0)
+            zeros++;
+        if (zeros == 2) {
+            resultingLinkedList.pushBack(result);
+            zeros--;
+            result = 0;
+        } else
+            result += curr->val;
+        curr = curr->next;
+    }
+    resultingLinkedList.Print();
+}
+
+void generateBinary(int n, Queue<int> &q) {
+    if (n == 0)return;
+    generateBinary(n / 2, q);
+    q.enqueue(n & 1);
+}
+
+void binaryNumbers(int n) {
+    Queue<int> q(32);
+    for (int i = 1; i <= n; i++) {
+        generateBinary(i, q);
+        while (!q.isEmpty()) {
+            cout << q.dequeue();
+        }
+        cout << ' ';
+        q.clear();
+    }
+}
+
+template<class T>
+class StackUsingQueue {
+    Queue<T> q;
+public:
+    explicit StackUsingQueue(int n) {
+        Queue<T> qq(n);
+        q = qq;
+    }
+
+    void push(T n) {
+        q.enqueue(n);
+    }
+
+    void pop() {
+        q.reverseQueue();
+        q.dequeue();
+        q.reverseQueue();
+    }
+
+    void print() {
+        q.print();
+    }
+};
+
 int main() {
 
-//     const int N = 100; // Change N to the desired array size
+    //---------------------------------------------------------------------
 
-//     int arr[N];
+    // Merge K Sorted Linked Lists
 
-//     for (int i = 0; i < N; i++) {
-//         arr[i] = rand() % 1000; // Generates a random integer between 0 and 999
-//     }
+    /*vector<LinkedList<int>> vectorOfLinkedLists;
+    int no_of_LinkedLists;
+    cin >> no_of_LinkedLists;
+    vectorOfLinkedLists.resize(no_of_LinkedLists);
+    for (int i = 0; i < (int) vectorOfLinkedLists.size(); i++) {
+        cout << "ENTER " << i + 1 << "th Linked List Size" << endl;
+        int n;
+        cin >> n;
+        while (n--) {
+            int x;
+            cin >> x;
+            vectorOfLinkedLists[i].pushBack(x);
+        }
+    }
+    mergeLinkedLists(vectorOfLinkedLists);*/
 
-//     int arrSize = N;
-//     clock_t x = clock(); 
-//     countSort(arr,N-1);
-//     clock_t time = clock() - x;
+    //---------------------------------------------------------------------
 
+    // Combine Nodes Between Zeros
 
-//     cout<<endl<<"sorted: ";
-//     for (int i = 0; i < arrSize; i++) {
-//         cout << arr[i] << " ";
-//     }
-// printf ("This Algorithm take (%.8lf ms).\n", ((double)time/CLOCKS_PER_SEC) * 1000);
-//     cout << endl;
+    /*vector<int> v = {0,3,1,0,4,5,2,0};
+    vector<int> z = {0, 1, 0, 3, 0, 2, 2, 0};
+    LinkedList<int> linkedList;
+    for(auto &i:v){
+        linkedList.pushBack(i);
+    }
+    CombineNodesBetweenZeros(linkedList);*/
 
+    //---------------------------------------------------------------------
+    // Binary Numbers From 1 to N
 
+    /*binaryNumbers(5);*/
+
+    //---------------------------------------------------------------------
+
+    // Stack Using Queue
+
+    /*StackUsingQueue<int> STC(10);
+    STC.push(10);
+    STC.push(20);
+    STC.push(30);
+    STC.push(40);
+    STC.push(50);
+    STC.push(60);
+    STC.print();
+    STC.pop();
+    STC.print();
+    STC.pop();*/
+
+    //---------------------------------------------------------------------
+
+    // sort Queue
+
+    /*Queue<int> q(50);
+    q.enqueue(50);
+    q.enqueue(40);
+    q.enqueue(30);
+    q.enqueue(20);
+    q.enqueue(10);
+    q.sort();
+    q.print();*/
+
+    //---------------------------------------------------------------------
 
 }
